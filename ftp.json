@@ -1,0 +1,52 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "ftpConnectionAPIName": {
+        "type": "string",
+        "metadata": {
+          "description": "The name of the connection api to access the jp ftp."
+        }
+      },
+      "ftpServerAddress": {
+        "type": "string",
+        "metadata": {
+          "description": "The name of the jp ftp server address."
+        }
+      },
+      "ftpUsername": {
+        "type": "string",
+        "metadata": {
+          "description": "The name of the jp ftp user name."
+        }
+      },
+      "ftpPassword": {
+        "type": "securestring",
+        "metadata": {
+          "description": "The name of the jp ftp password."
+        }
+      }
+    },
+  "variables": {},
+    "resources": [
+      {
+        "type": "Microsoft.Web/connections",
+        "name": "[parameters('ftpConnectionAPIName')]",
+        "apiVersion": "2016-06-01",
+        "location": "[resourceGroup().location]",
+        "scale": null,
+        "properties": {
+          "displayName": "[parameters('ftpConnectionAPIName')]",
+          "parameterValues": {
+            "serverAddress": "[parameters('ftpServerAddress')]",
+            "userName": "[parameters('ftpUsername')]",
+            "password": "[parameters('ftpPassword')]"
+          },
+          "api": {
+            "id": "[concat('subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/ftp')]"
+          }
+        },
+        "dependsOn": []
+      }
+    ]
+  }

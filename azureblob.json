@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "azureBlobConnectionAPIName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the connection api to access the azure blob storage."
+      }
+    },
+    "storageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "The Storage Account Name."
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Web/connections",
+      "name": "[parameters('azureBlobConnectionAPIName')]",
+      "apiVersion": "2016-06-01",
+      "location": "[resourceGroup().location]",
+      "scale": null,
+      "properties": {
+        "displayName": "[parameters('azureBlobConnectionAPIName')]",
+        "parameterValues": {
+          "accountName": "[parameters('storageAccountName')]",
+          "accessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),'2015-05-01-preview').key1]"
+        },
+        "api": {
+          "id": "[concat('subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azureblob')]"
+        }
+      },
+      "dependsOn": []
+    }
+  ]
+}

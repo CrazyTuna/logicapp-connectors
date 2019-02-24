@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sqlConnectionAPIName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the connection api to access the service bus namepsace."
+      }
+    },
+    "sqlserverName": {
+      "type": "string",
+      "metadata": {
+        "description": "The Name of the SQL Server instance."
+      }
+    },
+    "databaseName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the database."
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Web/connections",
+      "name": "[parameters('sqlConnectionAPIName')]",
+      "apiVersion": "2016-06-01",
+      "location": "[resourceGroup().location]",
+      "scale": null,
+      "properties": {
+        "displayName": "[parameters('sqlConnectionAPIName')]",
+        "parameterValues": {
+          "server": "[concat('tcp:', reference(resourceId('Microsoft.Sql/servers', parameters('sqlserverName')), '2015-05-01-preview').fullyQualifiedDomainName, ',1433')]",
+          "database": "[parameters('databaseName')]",
+          "username": "[reference(resourceId('Microsoft.Sql/servers', parameters('sqlserverName')), '2015-05-01-preview').administratorLogin]",
+          "password": "[reference(resourceId('Microsoft.Sql/servers', parameters('sqlserverName')), '2015-05-01-preview').administratorLoginPassword]"
+        },
+        "api": {
+          "id": "[concat('subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/sql')]"
+        }
+      },
+      "dependsOn": []
+    }
+  ]
+}

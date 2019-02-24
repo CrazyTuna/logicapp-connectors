@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "servicebusNamespaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "The Service Bus Namespace Name."
+      }
+    },
+    "servicebusConnectionAPIName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the connection api to access the service bus namepsace."
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Web/connections",
+      "name": "[parameters('servicebusConnectionAPIName')]",
+      "apiVersion": "2016-06-01",
+      "location": "[resourceGroup().location]",
+      "scale": null,
+      "properties": {
+        "displayName": "[parameters('servicebusConnectionAPIName')]",
+        "parameterValues": {
+          "connectionString": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/AuthorizationRules', parameters('servicebusNamespaceName'),'RootManageSharedAccessKey'),'2015-08-01').primaryConnectionString]"
+        },
+        "api": {
+          "id": "[concat('subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/servicebus')]"
+        }
+      },
+      "dependsOn": []
+    }
+  ]
+}
