@@ -26,13 +26,13 @@
     {
       "type": "Microsoft.Web/connections",
       "name": "[parameters('sqlConnectionAPIName')]",
-      "apiVersion": "2016-06-01",
+      "apiVersion": "2018-07-01-preview",
       "location": "[resourceGroup().location]",
       "scale": null,
       "properties": {
         "displayName": "[parameters('sqlConnectionAPIName')]",
         "parameterValues": {
-          "server": "[concat('tcp:', reference(resourceId('Microsoft.Sql/servers', parameters('sqlserverName')), '2015-05-01-preview').fullyQualifiedDomainName, ',1433')]",
+          "server": "[reference(resourceId('Microsoft.Sql/servers', parameters('sqlserverName')), '2015-05-01-preview').fullyQualifiedDomainName]",
           "database": "[parameters('databaseName')]",
           "username": "[reference(resourceId('Microsoft.Sql/servers', parameters('sqlserverName')), '2015-05-01-preview').administratorLogin]",
           "password": "[reference(resourceId('Microsoft.Sql/servers', parameters('sqlserverName')), '2015-05-01-preview').administratorLoginPassword]"
